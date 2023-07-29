@@ -2,8 +2,6 @@
 
 
 #include "GlobalSetting.h"
-#include "WebInterfaceHelpers.h"
-#include "WebInterfaceJSON.h"
 
 // Sets default values
 AGlobalSetting::AGlobalSetting()
@@ -27,7 +25,6 @@ void AGlobalSetting::BeginPlay()
 
 void AGlobalSetting::OutputJson()
 {
-	UWebInterfaceJsonObject* JSON = UWebInterfaceHelpers::ConstructObject();
 
 }
 

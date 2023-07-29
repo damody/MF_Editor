@@ -2,6 +2,8 @@
 
 
 #include "Creep.h"
+#include "Components/ArrowComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
 ACreep::ACreep()

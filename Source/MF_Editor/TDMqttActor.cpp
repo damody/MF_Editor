@@ -1,109 +1,110 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "TDMqttActor.h"
-#include "WebInterfaceHelpers.h"
-#include "WebInterfaceJSON.h"
+
+#include <JsonObjectWrapper.h>
 
 void ATDMqttActor::OnReceiveNative(const FString& sTopic, const TArray<uint8>& Msg)
 {
 	FString sMsg = ConvertToString(Msg);
-	UWebInterfaceJsonValue* data = UWebInterfaceHelpers::Parse(sMsg);
-	if (data)
+	FJsonObjectWrapper JsonObjectWrapper;
+	JsonObjectWrapper.JsonObjectFromString(sMsg);
+	if (JsonObjectWrapper.JsonObject.IsValid())
 	{
 		if (sTopic == "td/all/res")
 		{
 			//{"a":"C","d":{"id":7,"tatk":{"asd":0.30000001192092896,"asd_count":0.0,"atk_physic":3.0,"bullet_speed":100.0,"range":300.0},"tpty":{"base_hp":10,"block":0,"cur_hp":10,"max_hp":10,"mblock":1,"size":100.0}},"t":"tower"}
-			if (data->GetObject()->GetString("t") == "tower")
+			if (JsonObjectWrapper.JsonObject->GetStringField("t") == "tower")
 			{
-				if (data->GetObject()->GetString("a") == "C")
+				if (JsonObjectWrapper.JsonObject->GetStringField("a") == "C")
 				{
-					UWebInterfaceJsonObject* d = data->GetObject()->GetObject("d");
+					TSharedPtr<FJsonObject> d = JsonObjectWrapper.JsonObject->GetObjectField("d");
 					FTowerCreate td;
-					if (d->HasKey("pos"))
+					if (d->HasField("pos"))
 					{
-						td.id = d->GetInteger("id");
-						td.x = d->GetObject("pos")->GetNumber("x");
-						td.y = d->GetObject("pos")->GetNumber("y");
-						td.asd = d->GetObject("tatk")->GetNumber("asd");
-						td.atk_physic = d->GetObject("tatk")->GetNumber("atk_physic");
-						td.range = d->GetObject("tatk")->GetNumber("range");
-						td.cur_hp = d->GetObject("tpty")->GetNumber("cur_hp");
-						td.max_hp = d->GetObject("tpty")->GetNumber("max_hp");
+						td.id = d->GetIntegerField("id");
+						td.x = d->GetObjectField("pos")->GetNumberField("x");
+						td.y = d->GetObjectField("pos")->GetNumberField("y");
+						td.asd = d->GetObjectField("tatk")->GetNumberField("asd");
+						td.atk_physic = d->GetObjectField("tatk")->GetNumberField("atk_physic");
+						td.range = d->GetObjectField("tatk")->GetNumberField("range");
+						td.cur_hp = d->GetObjectField("tpty")->GetNumberField("cur_hp");
+						td.max_hp = d->GetObjectField("tpty")->GetNumberField("max_hp");
 						OnReceiveTowerCreate(td);
 					}
 				}
-				else if (data->GetObject()->GetString("a") == "D")
+				else if (JsonObjectWrapper.JsonObject->GetStringField("a") == "D")
 				{
-					UWebInterfaceJsonObject* d = data->GetObject()->GetObject("d");
+					TSharedPtr<FJsonObject> d = JsonObjectWrapper.JsonObject->GetObjectField("d");
 					FActorDie cm;
-					cm.id = d->GetInteger("id");
+					cm.id = d->GetIntegerField("id");
 					OnReceiveTowerDie(cm);
 				}
 			}
 			//{"a":"C","d":{"cdata":{"def_magic":0.0,"def_physic":0.0,"hp":10.0,"msd":5.0},"creep":{"class":"creep2","path":"path1","pidx":0},"id":10587,"pos":{"x":8.0,"y":2.0}},"t":"creep"}
-			else if (data->GetObject()->GetString("t") == "creep")
+			else if (JsonObjectWrapper.JsonObject->GetStringField("t") == "creep")
 			{
-				if (data->GetObject()->GetString("a") == "C")
+				if (JsonObjectWrapper.JsonObject->GetStringField("a") == "C")
 				{
-					UWebInterfaceJsonObject* d = data->GetObject()->GetObject("d");
+					TSharedPtr<FJsonObject> d = JsonObjectWrapper.JsonObject->GetObjectField("d");
 					FCreepCreate cc;
-					cc.id = d->GetInteger("id");
-					cc.x = d->GetObject("pos")->GetNumber("x");
-					cc.y = d->GetObject("pos")->GetNumber("y");
-					cc.msd = d->GetObject("cdata")->GetNumber("msd");
-					cc.def_magic = d->GetObject("cdata")->GetNumber("def_magic");
-					cc.def_physic = d->GetObject("cdata")->GetNumber("def_physic");
-					cc.hp = d->GetObject("cdata")->GetNumber("hp");
-					cc.name = d->GetObject("creep")->GetString("name");
+					cc.id = d->GetIntegerField("id");
+					cc.x = d->GetObjectField("pos")->GetNumberField("x");
+					cc.y = d->GetObjectField("pos")->GetNumberField("y");
+					cc.msd = d->GetObjectField("cdata")->GetNumberField("msd");
+					cc.def_magic = d->GetObjectField("cdata")->GetNumberField("def_magic");
+					cc.def_physic = d->GetObjectField("cdata")->GetNumberField("def_physic");
+					cc.hp = d->GetObjectField("cdata")->GetNumberField("hp");
+					cc.name = d->GetObjectField("creep")->GetStringField("name");
 					OnReceiveCreepCreate(cc);
 				}
-				else if (data->GetObject()->GetString("a") == "M")
+				else if (JsonObjectWrapper.JsonObject->GetStringField("a") == "M")
 				{
-					UWebInterfaceJsonObject* d = data->GetObject()->GetObject("d");
+					TSharedPtr<FJsonObject> d = JsonObjectWrapper.JsonObject->GetObjectField("d");
 					FCreepMove cm;
-					cm.id = d->GetInteger("id");
-					cm.x = d->GetNumber("x");
-					cm.y = d->GetNumber("y");
+					cm.id = d->GetIntegerField("id");
+					cm.x = d->GetNumberField("x");
+					cm.y = d->GetNumberField("y");
 					OnReceiveCreepMove(cm);
 				}
-				else if (data->GetObject()->GetString("a") == "Hp")
+				else if (JsonObjectWrapper.JsonObject->GetStringField("a") == "Hp")
 				{
-					UWebInterfaceJsonObject* d = data->GetObject()->GetObject("d");
+					TSharedPtr<FJsonObject> d = JsonObjectWrapper.JsonObject->GetObjectField("d");
 					FCreepHp cm;
-					cm.id = d->GetInteger("id");
-					cm.hp = d->GetNumber("hp");
+					cm.id = d->GetIntegerField("id");
+					cm.hp = d->GetNumberField("hp");
 					OnReceiveCreepHp(cm);
 				}
-				else if (data->GetObject()->GetString("a") == "D")
+				else if (JsonObjectWrapper.JsonObject->GetStringField("a") == "D")
 				{
-					UWebInterfaceJsonObject* d = data->GetObject()->GetObject("d");
+					TSharedPtr<FJsonObject> d = JsonObjectWrapper.JsonObject->GetObjectField("d");
 					FActorDie cm;
-					cm.id = d->GetInteger("id");
+					cm.id = d->GetIntegerField("id");
 					OnReceiveCreepDie(cm);
 				}
 			}
 			//{"a":"C","d":{"id":110,"msd":200.0,"owner":13,"pos":{"x":100.0,"y":200.0},"radius":0.0,"target":112,"time_left":3.0},"t":"projectile"}
-			else if (data->GetObject()->GetString("t") == "projectile")
+			else if (JsonObjectWrapper.JsonObject->GetStringField("a") == "projectile")
 			{
-				if (data->GetObject()->GetString("a") == "C")
+				if (JsonObjectWrapper.JsonObject->GetStringField("a") == "C")
 				{
-					UWebInterfaceJsonObject* d = data->GetObject()->GetObject("d");
+					TSharedPtr<FJsonObject> d = JsonObjectWrapper.JsonObject->GetObjectField("d");
 					FProjctileCreate pc;
-					pc.id = d->GetInteger("id");
-					pc.owner = d->GetInteger("owner");
-					pc.target = d->GetInteger("target");
-					pc.time_left = d->GetNumber("time_left");
-					pc.x = d->GetObject("pos")->GetNumber("x");
-					pc.y = d->GetObject("pos")->GetNumber("y");
-					pc.radius = d->GetNumber("radius");
-					pc.msd = d->GetNumber("msd");
+					pc.id = d->GetIntegerField("id");
+					pc.owner = d->GetIntegerField("owner");
+					pc.target = d->GetIntegerField("target");
+					pc.time_left = d->GetNumberField("time_left");
+					pc.x = d->GetObjectField("pos")->GetNumberField("x");
+					pc.y = d->GetObjectField("pos")->GetNumberField("y");
+					pc.radius = d->GetNumberField("radius");
+					pc.msd = d->GetNumberField("msd");
 					OnReceiveProjectileCreate(pc);
 					
 				}
-				else if (data->GetObject()->GetString("a") == "D")
+				else if (JsonObjectWrapper.JsonObject->GetStringField("a") == "D")
 				{
-					UWebInterfaceJsonObject* d = data->GetObject()->GetObject("d");
+					TSharedPtr<FJsonObject> d = JsonObjectWrapper.JsonObject->GetObjectField("d");
 					FActorDie cm;
-					cm.id = d->GetInteger("id");
+					cm.id = d->GetIntegerField("id");
 					OnReceiveProjectileDie(cm);
 				}
 			}

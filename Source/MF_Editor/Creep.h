@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Creep.generated.h"
+
+class UProjectileMovementComponent;
+class UArrowComponent;
 
 UCLASS()
 class MF_EDITOR_API ACreep : public AActor
@@ -17,7 +19,7 @@ public:
 	ACreep();
 
 	UPROPERTY(VisibleAnywhere, meta = (DisplayName = "原始方向Arrow"), BlueprintReadOnly)
-	class UArrowComponent* Arrow;
+	UArrowComponent* Arrow;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* PMovement;

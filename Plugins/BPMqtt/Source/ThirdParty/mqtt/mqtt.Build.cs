@@ -15,7 +15,7 @@ public class mqtt : ModuleRules
 			PublicSystemLibraries.Add("ws2_32.lib");
 
             // Add the import library
-            PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Win64", "paho-mqtt3as-static.lib"));
+            PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Win64", "paho-mqtt3a-static.lib"));
 
             // Delay-load the DLL, so we can load it from the right place first
             //PublicDelayLoadDLLs.Add("paho-mqtt3as.dll");
@@ -27,15 +27,15 @@ public class mqtt : ModuleRules
         }
         else if (Target.Platform == UnrealTargetPlatform.Linux)
         {
-			PublicSystemLibraryPaths.Add(Path.Combine(ModuleDirectory, "Linux"));
-			PublicSystemLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Linux", "libpaho-mqtt3as.a"));
+			PublicSystemLibraryPaths.Add(Path.Combine(ModuleDirectory, "lib", "Linux"));
+			PublicSystemLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Linux", "libpaho-mqtt3a.a"));
         }
 		else if (Target.IsInPlatformGroup(UnrealPlatformGroup.Android))
 		{
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Android", "ARMv7", "libpaho-mqtt3as.a"));
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Android", "ARM64", "libpaho-mqtt3as.a"));
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Android", "x86", "libpaho-mqtt3as.a"));
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Android", "x64", "libpaho-mqtt3as.a"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Android", "ARMv7", "libpaho-mqtt3a.a"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Android", "ARM64", "libpaho-mqtt3a.a"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Android", "x86", "libpaho-mqtt3a.a"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "Android", "x64", "libpaho-mqtt3a.a"));
 		}
 		else
         {

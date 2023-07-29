@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "ProjectileActor.generated.h"
 
+class UProjectileMovementComponent;
+class UArrowComponent;
+
 UCLASS()
 class MF_EDITOR_API AProjectileActor : public AActor
 {
@@ -16,7 +19,7 @@ public:
 	AProjectileActor();
 
 	UPROPERTY(VisibleAnywhere, meta = (DisplayName = "原始方向Arrow"), BlueprintReadOnly)
-	class UArrowComponent* Arrow;
+	UArrowComponent* Arrow;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* PMovement;

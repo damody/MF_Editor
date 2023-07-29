@@ -2,6 +2,8 @@
 
 
 #include "ProjectileActor.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/ArrowComponent.h"
 
 // Sets default values
 AProjectileActor::AProjectileActor()
