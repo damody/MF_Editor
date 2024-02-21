@@ -10,7 +10,7 @@ void ATDMqttActor::OnReceiveNative(const FString& sTopic, const TArray<uint8>& M
 	JsonObjectWrapper.JsonObjectFromString(sMsg);
 	if (JsonObjectWrapper.JsonObject.IsValid())
 	{
-		if (sTopic == "td/all/res")
+		//if (sTopic == "td/{}/client")
 		{
 			//{"a":"C","d":{"id":7,"tatk":{"asd":0.30000001192092896,"asd_count":0.0,"atk_physic":3.0,"bullet_speed":100.0,"range":300.0},"tpty":{"base_hp":10,"block":0,"cur_hp":10,"max_hp":10,"mblock":1,"size":100.0}},"t":"tower"}
 			if (JsonObjectWrapper.JsonObject->GetStringField("t") == "tower")
@@ -40,7 +40,7 @@ void ATDMqttActor::OnReceiveNative(const FString& sTopic, const TArray<uint8>& M
 					OnReceiveTowerDie(cm);
 				}
 			}
-			//{"a":"C","d":{"cdata":{"def_magic":0.0,"def_physic":0.0,"hp":10.0,"msd":5.0},"creep":{"class":"creep2","path":"path1","pidx":0},"id":10587,"pos":{"x":8.0,"y":2.0}},"t":"creep"}
+			//{"a":"C","d":{"hp":100.0,"id":1,"kind":"cp1","msd":10.0,"pos":{"x":0.0,"y":0.0}},"t":"creep"}
 			else if (JsonObjectWrapper.JsonObject->GetStringField("t") == "creep")
 			{
 				if (JsonObjectWrapper.JsonObject->GetStringField("a") == "C")
@@ -50,20 +50,20 @@ void ATDMqttActor::OnReceiveNative(const FString& sTopic, const TArray<uint8>& M
 					cc.id = d->GetIntegerField("id");
 					cc.x = d->GetObjectField("pos")->GetNumberField("x");
 					cc.y = d->GetObjectField("pos")->GetNumberField("y");
-					cc.msd = d->GetObjectField("cdata")->GetNumberField("msd");
-					cc.def_magic = d->GetObjectField("cdata")->GetNumberField("def_magic");
-					cc.def_physic = d->GetObjectField("cdata")->GetNumberField("def_physic");
-					cc.hp = d->GetObjectField("cdata")->GetNumberField("hp");
-					cc.name = d->GetObjectField("creep")->GetStringField("name");
+					cc.msd = d->GetNumberField("msd");
+					cc.def_magic = 0;
+					cc.def_physic = 0;
+					cc.hp = d->GetNumberField("hp");
+					cc.name = d->GetStringField("kind");
 					OnReceiveCreepCreate(cc);
 				}
-				else if (JsonObjectWrapper.JsonObject->GetStringField("a") == "M")
+				else if (JsonObjectWrapper.JsonObject->GetStringField("a") == "U")
 				{
 					TSharedPtr<FJsonObject> d = JsonObjectWrapper.JsonObject->GetObjectField("d");
 					FCreepMove cm;
 					cm.id = d->GetIntegerField("id");
-					cm.x = d->GetNumberField("x");
-					cm.y = d->GetNumberField("y");
+					cm.x = d->GetObjectField("tar")->GetNumberField("x");
+					cm.y = d->GetObjectField("tar")->GetNumberField("y");
 					OnReceiveCreepMove(cm);
 				}
 				else if (JsonObjectWrapper.JsonObject->GetStringField("a") == "Hp")
