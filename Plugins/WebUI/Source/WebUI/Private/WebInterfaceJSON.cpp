@@ -1,7 +1,6 @@
 // Copyright 2017 Tracer Interactive, LLC. All Rights Reserved.
 
 #include "WebInterfaceJSON.h"
-#include "WebInterface.h"
 #include "WebInterfaceHelpers.h"
 
 EWebInterfaceJsonType UWebInterfaceJsonValue::GetType()

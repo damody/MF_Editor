@@ -1,7 +1,6 @@
 // Copyright 2017 Tracer Interactive, LLC. All Rights Reserved.
 
 #include "WebInterfaceHelpers.h"
-#include "WebInterface.h"
 #include "WebInterfaceJSON.h"
 
 UWebInterfaceJsonValue *UWebInterfaceHelpers::Parse( const FString &Text )
